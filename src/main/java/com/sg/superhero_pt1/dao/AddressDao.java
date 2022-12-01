@@ -1,7 +1,6 @@
 package com.sg.superhero_pt1.dao;
 
 import com.sg.superhero_pt1.model.Address;
-import com.sg.superhero_pt1.model.Member;
 
 import java.util.List;
 
@@ -17,7 +16,5 @@ public interface AddressDao {
     void updateAddress(Address address);
 
     void deleteAddressById(int add_id);
-
-    List<Address> getAllForMember(Member member);
 
 }

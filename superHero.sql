@@ -10,18 +10,25 @@ CREATE TABLE address (
 );
 CREATE TABLE organization (
 	org_id INT PRIMARY KEY AUTO_INCREMENT,
-	org_name VARCHAR(250) NOT NULL,  
-	org_description VARCHAR(250) NOT NULL,  
+	org_name VARCHAR(250) NOT NULL,
+	org_description VARCHAR(250) NOT NULL,
 	phone VARCHAR(250) NOT NULL,
-    add_id INT NOT NULL,
+    add_id INT NULL, -- assume address is optional (like maybe it is a secret)
     CONSTRAINT FOREIGN KEY FK_organization_address (add_id)
 		REFERENCES address (add_id)
+);
+CREATE TABLE powers (
+  powers_id int PRIMARY KEY AUTO_INCREMENT,
+  powers_name varchar(15) NOT NULL
 );
 CREATE TABLE member (
 	member_id INT PRIMARY KEY AUTO_INCREMENT,
     member_name VARCHAR(20) NOT NULL,
     member_description VARCHAR(100) NOT NULL,
-    powers VARCHAR(50) NOT NULL
+    powers_id INT NOT NULL,
+    -- powers VARCHAR(50) NOT NULL
+    CONSTRAINT FOREIGN KEY FK_member_powers (powers_id)
+		REFERENCES powers (powers_id)
 );
 CREATE TABLE memberOrg (
 	member_id INT NOT NULL,
@@ -38,7 +45,7 @@ CREATE TABLE sightings (
     `description` VARCHAR(100) NOT NULL,
     latitude DOUBLE NOT NULL,
     longitude DOUBLE NOT NULL,
-    add_id INT NOT NULL,
+    add_id INT NULL, -- assume address is optional because maybe we don't know the address
     CONSTRAINT FOREIGN KEY FK_sightings_address (add_id)
 		REFERENCES address (add_id)
 );
