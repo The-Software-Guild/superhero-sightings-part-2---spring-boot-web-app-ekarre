@@ -25,6 +25,7 @@ public class OrganizationController {
 
     @GetMapping("organizations")
     public String displayOrganizations(Model model){
+        //we want the Address to be a drop-down so we have to show all
         List<Organization> organizations = organizationDao.getAllOrganizations();
         model.addAttribute("organizations", organizations);
         List<Address> addresses = addressDao.getAllAddresses();
@@ -62,6 +63,7 @@ public class OrganizationController {
 
     @GetMapping("editOrganization")
     public String editOrganization(HttpServletRequest request, Model model){
+        //we want the Address to be a drop-down in the edit, so we have to get all instances
         int org_id = Integer.parseInt(request.getParameter("org_id"));
         Organization organization = organizationDao.getOrganizationById(org_id);
         List<Address> addresses = addressDao.getAllAddresses();

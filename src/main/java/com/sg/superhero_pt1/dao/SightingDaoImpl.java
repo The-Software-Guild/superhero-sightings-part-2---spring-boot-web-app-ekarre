@@ -4,9 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-
 import com.sg.superhero_pt1.model.Member;
-import com.sg.superhero_pt1.model.MemberSighting;
 import com.sg.superhero_pt1.model.SightingViewDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -36,13 +34,15 @@ public class SightingDaoImpl implements SightingDao{
 	        }
 	}
 
-	
+	//this lets us get all the sighting columns
 	@Override
 	public List<Sighting> getAllSightings() {
 		final String GET_ALL_SIGHTINGS = "SELECT * FROM sightings";
         return jdbc.query(GET_ALL_SIGHTINGS, new SightingMapper());
 	}
 
+	//this lets us get all the columns we want to display at the bottom, allowing it to be "custom"
+	//we included the date because it is part of the bridge table MemberSighting
 	@Override
 	public List<SightingViewDetail> getSightingDetail() {
 		final String sql = "SELECT sightings.sighting_id, sightings.sighting_name, sightings.description, sightings.latitude, sightings.longitude, address.city, member.member_name, memberSighting.date FROM sightings " +
@@ -52,13 +52,13 @@ public class SightingDaoImpl implements SightingDao{
 		return jdbc.query(sql, new SightingMapper2());
 	}
 
+	//this is for our homepage, so we can see the latest 10 sightings
+	//we order in descending order based on the sighting_id with a limit of 10 viewable at a time
 	@Override
 	public List<Sighting> getLastTenSightings() {
 		final String GET_ALL_SIGHTINGS = "SELECT * FROM sightings ORDER BY sighting_id DESC LIMIT 10";
 		return jdbc.query(GET_ALL_SIGHTINGS, new SightingMapper());
 	}
-
-	
 	
 	@Override
 	@Transactional 
@@ -78,6 +78,8 @@ public class SightingDaoImpl implements SightingDao{
 	        return sighting;
 	}
 
+	//this allows us to add the elements into the MemberSighting bridge table
+	//it has 3 parameters because it needs to grab the "getters" from three different areas
 	@Override
 	public void addMemberToSighting(Sighting sighting, Member member, SightingViewDetail svd) {
 		final String sql = "INSERT INTO memberSighting(member_id, sighting_id, date) " +
@@ -88,9 +90,11 @@ public class SightingDaoImpl implements SightingDao{
 				svd.getDate());
 
 	}
-	
+
 	@Override
 	public void updateSighting(Sighting sighting) {
+		//we don't want the user to be able to update the sighting_name because it is acting as the "primary key" in the bridge table
+		//ideally we wouldn't update any part of the bridge table but this instance is odd
 		final String UPDATE_SIGHTING = "UPDATE sightings SET description = ?, latitude = ?, longitude = ?, add_id =? "
                 + "WHERE sighting_id = ?";
         jdbc.update(UPDATE_SIGHTING,
@@ -102,6 +106,7 @@ public class SightingDaoImpl implements SightingDao{
 		
 	}
 
+	//this allows us to update the new information into the bridge table
 	@Override
 	public void updateMemberSighting(Sighting sighting, Member member, SightingViewDetail svd) {
 		final String sql = "UPDATE memberSighting SET member_id = ?, date = ? " +
@@ -117,9 +122,11 @@ public class SightingDaoImpl implements SightingDao{
 	@Override
 	@Transactional
 	public void deleteSightingById(int id) {
+		//delete from the bridge table first
 		 final String DELETE_MEMBERSIGHTING_SIGHTINGS = "DELETE FROM memberSighting WHERE sighting_id = ?";
 	        jdbc.update(DELETE_MEMBERSIGHTING_SIGHTINGS, id);
-	        
+
+			//then we can delete the actual sighting
 	        final String DELETE_SIGHTING = "DELETE FROM sightings WHERE sighting_id = ?";
 	        jdbc.update(DELETE_SIGHTING, id);
 		
@@ -142,7 +149,7 @@ public class SightingDaoImpl implements SightingDao{
 	    }
 
 	public static final class SightingMapper2 implements RowMapper <SightingViewDetail> {
-
+		//we created a second Mapper because we wanted it to implement the exact rows we wanted in the html
 		@Override
 		public SightingViewDetail mapRow(ResultSet rs, int index) throws SQLException {
 			SightingViewDetail svd = new SightingViewDetail();

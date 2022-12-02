@@ -17,48 +17,6 @@ public class Organization {
         return "Organization{" + "org_id=" + org_id + ", org_name=" + org_name + ", org_description=" + org_description + ", phone=" + phone + ",add_id" + add_id + '}';
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + this.org_id;
-        hash = 53 * hash + Objects.hashCode(this.org_name);
-        hash = 53 * hash + Objects.hashCode(this.org_description);
-        hash = 53 * hash + Objects.hashCode(this.phone);
-        hash = 53 * hash + Objects.hashCode(this.add_id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Organization other = (Organization) obj;
-        if (this.org_id != other.org_id) {
-            return false;
-        }
-        if (!Objects.equals(this.org_name, other.org_name)) {
-            return false;
-        }
-        if (!Objects.equals(this.org_description, other.org_description)) {
-            return false;
-        }
-        if (!Objects.equals(this.phone, other.phone)) {
-            return false;
-        }
-        if (!Objects.equals(this.add_id, other.add_id)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public int getOrg_id() {
         return org_id;
     }
@@ -94,5 +52,17 @@ public class Organization {
     public void setAdd_id(int add_id) { this.add_id = add_id; }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Organization)) return false;
+        Organization that = (Organization) o;
+        return getOrg_id() == that.getOrg_id() && getAdd_id() == that.getAdd_id() && Objects.equals(getOrg_name(), that.getOrg_name()) && Objects.equals(getOrg_description(), that.getOrg_description()) && Objects.equals(getPhone(), that.getPhone());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOrg_id(), getOrg_name(), getOrg_description(), getPhone(), getAdd_id());
+    }
 }
 

@@ -1,7 +1,6 @@
 package com.sg.superhero_pt1.dao;
 
 import com.sg.superhero_pt1.model.Powers;
-
 import java.util.List;
 
 public interface PowersDao {

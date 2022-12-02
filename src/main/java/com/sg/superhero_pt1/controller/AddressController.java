@@ -16,9 +16,11 @@ public class AddressController {
     @Autowired
     AddressDao addressDao;
 
+    //lets us view all the addresses we have created thus far
     @GetMapping("addresses")
     public String getAll(Model model) {
         List<Address> addresses = addressDao.getAllAddresses();
+        //add an attribute to reference in the html
         model.addAttribute("addresses", addresses);
         return "addresses";
     }
@@ -32,6 +34,7 @@ public class AddressController {
         address.setState(state);
         address.setZipcode(Integer.parseInt(zipcode));
         addressDao.add(address);
+        //once we add an address, redirect back to the addresses page, so we can enter another
         return "redirect:/addresses";
     }
 
@@ -46,6 +49,7 @@ public class AddressController {
         return "redirect:/addresses";
     }
 
+    //part one tells us to get the add_id when we click on "edit" and if we have that id, then redirect to the edit page
     @GetMapping("editAddress")
     public String editAddress(HttpServletRequest request, Model model) {
         int add_id = Integer.parseInt(request.getParameter("add_id"));
@@ -58,6 +62,7 @@ public class AddressController {
     public String performEditAddress(HttpServletRequest request) {
         int add_id = Integer.parseInt(request.getParameter("add_id"));
         Address address = addressDao.getAddressById(add_id);
+        //now we can set all the fields that the user entered, update the address, and redirect back to the addresses page
         address.setStreet(request.getParameter("street"));
         address.setCity(request.getParameter("city"));
         address.setState(request.getParameter("state"));

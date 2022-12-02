@@ -1,6 +1,5 @@
 package com.sg.superhero_pt1.dao;
 
-import com.sg.superhero_pt1.model.Member;
 import com.sg.superhero_pt1.model.Powers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -13,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+//this one is simple, just like Address
 @Repository
 public class PowersDaoImpl implements PowersDao{
     @Autowired

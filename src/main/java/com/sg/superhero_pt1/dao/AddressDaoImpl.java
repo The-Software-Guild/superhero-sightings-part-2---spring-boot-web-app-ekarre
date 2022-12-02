@@ -26,6 +26,7 @@ public class AddressDaoImpl  implements  AddressDao {
 
         jdbc.update(sql, address.getStreet(), address.getCity(), address.getState(), address.getZipcode());
 
+        //this allows us to auto increment out address_id by choosing the last one generated and setting the id to that
         int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
         address.setAdd_id(newId);
         return address;

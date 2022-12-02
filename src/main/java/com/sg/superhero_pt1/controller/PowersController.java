@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+//simple and similar to Address
 @Controller
 public class PowersController {
     @Autowired

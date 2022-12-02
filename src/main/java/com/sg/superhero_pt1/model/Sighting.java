@@ -7,8 +7,6 @@ import java.util.Objects;
 
 public class Sighting {
 
-	
-	
 	private int id; 
 	
 	@NotBlank(message = "Name must not be blank")

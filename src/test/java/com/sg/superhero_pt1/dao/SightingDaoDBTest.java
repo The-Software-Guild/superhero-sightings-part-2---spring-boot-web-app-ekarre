@@ -130,7 +130,7 @@ public class SightingDaoDBTest {
         Sighting fromDao = sightingDao.getSightingById(sighting.getId());
         assertEquals(sighting, fromDao);
 
-        sighting.setName("New Test First");
+        sighting.setDescription("New Test Description");
         sightingDao.updateSighting(sighting);
 
         assertNotEquals(sighting, fromDao);

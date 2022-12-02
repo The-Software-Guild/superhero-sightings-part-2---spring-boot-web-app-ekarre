@@ -27,6 +27,7 @@ public class MemberController {
 
     @GetMapping("members")
     public String displayMembers(Model model){
+        //in order to see the "drop-down" menu selections, we need to add in the "get all" functions for the respective drop downs we want to see
         List<MemberViewDetail> members = memberDao.getAllMembers();
         model.addAttribute("members", members);
         List<Organization> organizations = organizationDao.getAllOrganizations();
@@ -38,17 +39,20 @@ public class MemberController {
 
     @PostMapping("addMember")
     public String addMember(HttpServletRequest request){
+        //get all the parameters we want to add
         String member_name = request.getParameter("member_name");
         String member_description = request.getParameter("description");
         int powers = Integer.parseInt(request.getParameter("powers_id"));
         int org_id = Integer.parseInt(request.getParameter("org_id"));
 
+        //create a new member and set those parameters and add
         Member member = new Member();
         member.setMember_name(member_name);
         member.setDescription(member_description);
         member.setPowers_id(powers);
         memberDao.addMember(member);
 
+        //create a new organization and set the org_id and add it to the bridge table
         Organization organization = new Organization();
         organization.setOrg_id(org_id);
         memberDao.addMemberToOrg(member, organization);
@@ -93,10 +97,6 @@ public class MemberController {
         List<Powers> powers = powersDao.getAllPowers();
         model.addAttribute("powers", powers);
         model.addAttribute("member", member);
-        //added this to have the last selected org show at the top of the edit page
-        /*int org_id = Integer.parseInt(request.getParameter("org_id"));
-        Organization organization = organizationDao.getOrganizationById(org_id);*/
-        model.addAttribute("lastOrgSelected", org_id);
         return "updateMember";
     }
 

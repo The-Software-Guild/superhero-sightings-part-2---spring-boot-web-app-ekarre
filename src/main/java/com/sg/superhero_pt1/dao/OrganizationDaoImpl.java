@@ -63,6 +63,8 @@ public class OrganizationDaoImpl implements OrganizationDao {
     @Override
     @Transactional
     public void deleteOrganizationById(int org_id) {
+        //we don't need to think about the other tables when deleting this
+        //because we need to create an organization first before it can be use in the MemberOrg bridge table
         final String deleteOrg = "DELETE FROM organization WHERE org_id = ?;";
         jdbc.update(deleteOrg, org_id);
 

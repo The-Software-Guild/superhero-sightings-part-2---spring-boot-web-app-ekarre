@@ -3,7 +3,6 @@ package com.sg.superhero_pt1.dao;
 import com.sg.superhero_pt1.model.Member;
 import com.sg.superhero_pt1.model.MemberViewDetail;
 import com.sg.superhero_pt1.model.Organization;
-import com.sg.superhero_pt1.model.Powers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,12 +34,14 @@ public class MemberDaoImpl implements MemberDao {
         return member;
     }
 
+    //this allows us to enter the values into the MemberOrg bridge table
     @Override
     public void addMemberToOrg(Member member, Organization organization) {
         final String sql = "INSERT INTO memberOrg(member_id, org_id) " + "VALUES(?,?)";
         jdbc.update(sql, member.getMember_id(), organization.getOrg_id());
     }
 
+    //this lets us get all the columns we want to display at the bottom, allowing it to be "custom"
     @Override
     public List<MemberViewDetail> getAllMembers(){
         final String sql = "SELECT member.member_id, member.member_name, member.member_description, organization.org_name, organization.org_id, powers.powers_name FROM member " +
@@ -50,6 +51,7 @@ public class MemberDaoImpl implements MemberDao {
         return jdbc.query(sql, new MemberMapper2());
     }
 
+    //this allows us to get all the columns just from "member"
     @Override
     public List<Member> getAll(){
         final String sql = "SELECT * FROM member";
@@ -67,7 +69,6 @@ public class MemberDaoImpl implements MemberDao {
     }
     @Override
     public List<Member> getAllMembersAtSighting(int sighting_id) {
-//        final String sql = "SELECT m.* FROM MemberSighting WHERE sighting_id = ?";
         final String sql = "SELECT m.* FROM member m " + "JOIN memberSighting ms ON " +
                 "ms.member_id = m.member_id WHERE ms.sighting_id = ?";
         return jdbc.query(sql, new MemberMapper(), sighting_id);
@@ -82,18 +83,23 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     @Transactional
     public void deleteMemberById(int member_id) {
+        //delete from the bridge table first
         final String DELETE_MEMBERORG = "DELETE FROM memberOrg WHERE member_id = ?";
         jdbc.update(DELETE_MEMBERORG, member_id);
 
+        //then delete from the other bridge table
         final String DELETE_MEMBERSIGHT = "DELETE FROM memberSighting WHERE member_id = ?";
         jdbc.update(DELETE_MEMBERSIGHT, member_id);
 
+        //then we can safely delete the member itself
         final String DELETE_MEMBER = "DELETE FROM member WHERE member_id = ?";
         jdbc.update(DELETE_MEMBER, member_id);
     }
 
     @Override
     public void updateMember(Member member){
+        //we don't want the user to be able to update the member_name because it is acting as the "primary key" in the bridge table
+        //ideally we wouldn't update any part of the bridge table but this instance is odd
         final String sql = "UPDATE member SET member_description = ?, powers_id = ? " +
                 "WHERE member_id = ?";
         jdbc.update(sql,
@@ -102,6 +108,7 @@ public class MemberDaoImpl implements MemberDao {
                 member.getMember_id());
     }
 
+    //this lets us update the bridge table with the new information we created
     @Override
     public void updateMemberOrg(Member member, Organization org){
         final String sql = "UPDATE memberOrg SET org_id = ? " +
@@ -138,7 +145,7 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     public static final class MemberMapper2 implements RowMapper<MemberViewDetail> {
-
+        //we created a second Mapper because we wanted it to implement the exact rows we wanted in the html
         @Override
         public MemberViewDetail mapRow(ResultSet rs, int index) throws SQLException {
             MemberViewDetail mvd = new MemberViewDetail();
@@ -147,7 +154,7 @@ public class MemberDaoImpl implements MemberDao {
             mvd.setMember_description(rs.getString("member_description"));
             mvd.setOrg_name(rs.getString("org_name"));
             mvd.setPowers_name(rs.getString("powers_name"));
-            //added this in (also added it to the select statement in the query
+            //added this in (also added it to the select statement in the query)
             mvd.setOrg_id(rs.getInt("org_id"));
             return mvd;
         }
