@@ -78,6 +78,7 @@
                                    id="longitude" class="form-control"/>
                         </div>
                 </div>
+                <!--the 2 below are drop-downs for address and member so the user can choose from the existing ones-->
                 <div class="form-group row">
                     <label for="add_id" class="col-3 col-form-label">
                         Address</label>
@@ -136,8 +137,8 @@
                     <td th:text="${sightingDetail.city}"></td>
                     <td th:text="${sightingDetail.member_name}"></td>
                     <td th:text="${sightingDetail.date}"></td>
-                    <td><a href="#" th:href="@{/editSighting(id=${sightingDetail.sighting_id})}">Edit</a></td>
-                    <td><a href="#" th:href="@{/deleteSighting(id=${sightingDetail.sighting_id})}">Delete</a></td>
+                    <td><a href="#" th:href="@{/editSighting(sighting_id=${sightingDetail.sighting_id})}">Edit</a></td>
+                    <td><a href="#" th:href="@{/deleteSighting(sighting_id=${sightingDetail.sighting_id})}">Delete</a></td>
                 </tr>
                 </tbody>
             </table>

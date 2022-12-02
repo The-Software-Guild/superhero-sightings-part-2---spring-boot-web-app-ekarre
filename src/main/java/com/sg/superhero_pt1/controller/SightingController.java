@@ -109,7 +109,7 @@ public class SightingController {
 	    
 	   @GetMapping("editSighting")
 	   public String editSighting(HttpServletRequest request, Model model) {
-		   int id = Integer.parseInt(request.getParameter("id"));
+		   int id = Integer.parseInt(request.getParameter("sighting_id"));
 		   Sighting sighting = sightingDao.getSightingById(id);
 		   //there are a couple drop-downs we want to see, so we need to "get all"
 		   List<MemberViewDetail> members = memberDao.getAllMembers();
@@ -127,7 +127,7 @@ public class SightingController {
 		   int member_id = Integer.parseInt(request.getParameter("member_id"));
 	       Sighting sighting = sightingDao.getSightingById(id);
 	       Member member = memberDao.getMemberById(member_id);
-	       sighting.setName(request.getParameter("name"));
+	       sighting.setName(request.getParameter("sighting_name"));
 	       sighting.setDescription(request.getParameter("description"));
 	       sighting.setLatitude(Double.parseDouble(request.getParameter("latitude")));
 	       sighting.setLongitude(Double.parseDouble(request.getParameter("longitude")));
