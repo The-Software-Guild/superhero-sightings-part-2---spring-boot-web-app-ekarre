@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 
+import com.sg.superhero_pt1.model.Member;
+import com.sg.superhero_pt1.model.MemberSighting;
+import com.sg.superhero_pt1.model.SightingViewDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,6 +44,15 @@ public class SightingDaoImpl implements SightingDao{
 	}
 
 	@Override
+	public List<SightingViewDetail> getSightingDetail() {
+		final String sql = "SELECT sightings.sighting_id, sightings.sighting_name, sightings.description, sightings.latitude, sightings.longitude, address.city, member.member_name, memberSighting.date FROM sightings " +
+								   "JOIN memberSighting ON sightings.sighting_id=memberSighting.sighting_id " +
+								   "JOIN member ON memberSighting.member_id=member.member_id " +
+								   "JOIN address ON sightings.add_id=address.add_id ORDER BY sighting_id DESC";
+		return jdbc.query(sql, new SightingMapper2());
+	}
+
+	@Override
 	public List<Sighting> getLastTenSightings() {
 		final String GET_ALL_SIGHTINGS = "SELECT * FROM sightings ORDER BY sighting_id DESC LIMIT 10";
 		return jdbc.query(GET_ALL_SIGHTINGS, new SightingMapper());
@@ -66,14 +78,22 @@ public class SightingDaoImpl implements SightingDao{
 	        return sighting;
 	}
 
-	
+	@Override
+	public void addMemberToSighting(Sighting sighting, Member member, SightingViewDetail svd) {
+		final String sql = "INSERT INTO memberSighting(member_id, sighting_id, date) " +
+				"VALUES(?,?,?)";
+		jdbc.update(sql,
+				member.getMember_id(),
+				sighting.getId(),
+				svd.getDate());
+
+	}
 	
 	@Override
 	public void updateSighting(Sighting sighting) {
-		final String UPDATE_SIGHTING = "UPDATE sightings SET sighting_name = ?, description = ?, latitude = ?, longitude = ?, add_id =? "
+		final String UPDATE_SIGHTING = "UPDATE sightings SET description = ?, latitude = ?, longitude = ?, add_id =? "
                 + "WHERE sighting_id = ?";
         jdbc.update(UPDATE_SIGHTING,
-                sighting.getName(),
                 sighting.getDescription(),
                 sighting.getLatitude(),
         		sighting.getLongitude(),
@@ -82,7 +102,17 @@ public class SightingDaoImpl implements SightingDao{
 		
 	}
 
-	
+	@Override
+	public void updateMemberSighting(Sighting sighting, Member member, SightingViewDetail svd) {
+		final String sql = "UPDATE memberSighting SET member_id = ?, date = ? " +
+								   "WHERE sighting_id = ?";
+		jdbc.update(sql,
+				member.getMember_id(),
+				svd.getDate(),
+				sighting.getId());
+
+
+	}
 	
 	@Override
 	@Transactional
@@ -110,4 +140,21 @@ public class SightingDaoImpl implements SightingDao{
 	            return sighting;
 	        }
 	    }
+
+	public static final class SightingMapper2 implements RowMapper <SightingViewDetail> {
+
+		@Override
+		public SightingViewDetail mapRow(ResultSet rs, int index) throws SQLException {
+			SightingViewDetail svd = new SightingViewDetail();
+			svd.setSighting_id(rs.getInt("sighting_id"));
+			svd.setSighting_name(rs.getString("sighting_name"));
+			svd.setDescription(rs.getString("description"));
+			svd.setLatitude(rs.getDouble("latitude"));
+			svd.setLongitude(rs.getDouble("longitude"));
+			svd.setCity(rs.getString("city"));
+			svd.setMember_name(rs.getString("member_name"));
+			svd.setDate(rs.getDate("date"));
+			return svd;
+		}
+	}
 }

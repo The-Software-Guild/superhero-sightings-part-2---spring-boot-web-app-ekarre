@@ -96,8 +96,17 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="date" class="col-3 col-form-label">
+                        Date</label>
+                    <div class="col-9">
+                        <input type="text" name="date"
+                               id="date" class="form-control"/>
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-primary">Add Sighting</button>
             </form>
+        </div>
         </div>
     </div>
     <div class="row m-4 border border-dark">
@@ -105,26 +114,30 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
+                    <th>Sighting Id</th>
+                    <th>Sighting Name</th>
                     <th>Description</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
-                    <th>Address Id</th>
+                    <th>City</th>
+                    <th>Member</th>
+                    <th>Date</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="sighting : ${sightings}">
-                    <td th:text="${sighting.id}">Sighting ID</td>
-                    <td th:text="${sighting.name}">Sighting Name</td>
-                    <td th:text="${sighting.description}">Sighting Description</td>
-                    <td th:text="${sighting.latitude}">Sighting Latitude</td>
-                    <td th:text="${sighting.longitude}">Sighting Longitude</td>
-                    <td th:text="${sighting.add_id}">Sighting Address ID</td>
-                    <td><a href="#" th:href="@{/editSighting(id=${sighting.id})}">Edit</a></td>
-                    <td><a href="#" th:href="@{/deleteSighting(id=${sighting.id})}">Delete</a></td>
+                <tr th:each="sightingDetail : ${sightingDetails}">
+                    <td th:text="${sightingDetail.sighting_id}"></td>
+                    <td th:text="${sightingDetail.sighting_name}"></td>
+                    <td th:text="${sightingDetail.description}"></td>
+                    <td th:text="${sightingDetail.latitude}"></td>
+                    <td th:text="${sightingDetail.longitude}"></td>
+                    <td th:text="${sightingDetail.city}"></td>
+                    <td th:text="${sightingDetail.member_name}"></td>
+                    <td th:text="${sightingDetail.date}"></td>
+                    <td><a href="#" th:href="@{/editSighting(id=${sightingDetail.sighting_id})}">Edit</a></td>
+                    <td><a href="#" th:href="@{/deleteSighting(id=${sightingDetail.sighting_id})}">Delete</a></td>
                 </tr>
                 </tbody>
             </table>

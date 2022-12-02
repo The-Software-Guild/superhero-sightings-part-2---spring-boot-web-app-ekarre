@@ -1,7 +1,6 @@
 <!doctype html>
-<!--<html lang="en" xmlns="http://www.w3.org/1999/xhtml"-->
-<!--      xmlns:th="http://www.thymeleaf.org">-->
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -95,6 +94,7 @@
           <th>Member Name</th>
           <th>Member Description</th>
           <th>Member Powers</th>
+          <th>Member Organization</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
@@ -103,9 +103,10 @@
         <tr th:each="member : ${members}">
           <td th:text="${member.member_id}">Member ID</td>
           <td th:text="${member.member_name}">Member Name</td>
-          <td th:text="${member.description}">Member Description</td>
-          <td th:text="${member.powers_id}">Member Powers</td>
-          <td><a href="#" th:href="@{/updateMember(member_id=${member.member_id})}">Edit</a></td>
+          <td th:text="${member.member_description}">Member Description</td>
+          <td th:text="${member.powers_name}">Member Powers</td>
+          <td th:text="${member.org_name}">Member Organization</td>
+          <td><a href="#" th:href="@{/updateMember(member_id=${member.member_id}, org_id=${member.org_id})}">Edit</a></td>
           <td><a href="#" th:href="@{/deleteMember(member_id=${member.member_id})}">Delete</a></td>
         </tr>
         </tbody>

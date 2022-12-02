@@ -69,8 +69,8 @@
         </thead>
         <tbody>
         <tr th:each="power : ${powers}">
-          <td th:text="${power.powers_id}">Powers ID</td>
-          <td th:text="${power.powers_name}">Powers Name</td>
+          <td th:text="${power.powers_id}"></td>
+          <td th:text="${power.powers_name}"></td>
           <td><a href="#" th:href="@{/editPowers(powers_id=${power.powers_id})}">Edit</a></td>
           <td><a href="#" th:href="@{/deletePowers(powers_id=${power.powers_id})}">Delete</a></td>
         </tr>

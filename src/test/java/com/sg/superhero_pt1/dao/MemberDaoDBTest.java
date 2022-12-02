@@ -2,6 +2,8 @@ package com.sg.superhero_pt1.dao;
 
 import com.sg.superhero_pt1.TestApplicationConfiguration;
 import com.sg.superhero_pt1.model.Member;
+import com.sg.superhero_pt1.model.MemberViewDetail;
+import com.sg.superhero_pt1.model.Powers;
 import junit.framework.TestCase;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,47 +19,63 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplicationConfiguration.class)
 public class MemberDaoDBTest extends TestCase {
-    /*@Autowired
+    @Autowired
     MemberDao memberDao;
+
+    @Autowired
+    PowersDao powersDao;
 
 
     public MemberDaoDBTest(){}
 
     @Before
     public void setUp() {
-        List<Member> members = memberDao.getAllMembers();
-        for(Member member : members){
+        List<MemberViewDetail> members = memberDao.getAllMembers();
+        for(MemberViewDetail member : members){
             memberDao.deleteMemberById(member.getMember_id());
         }
-        //do for organization and sightings and addresses
+        List<Powers> powers = powersDao.getAllPowers();
+        for(Powers power : powers) {
+            powersDao.deletePowersById(power.getPowers_id());
+        }
     }
 
     @Test
     public void testAddAndGetMember(){
+        //add a power
+        Powers powers = new Powers();
+        powers.setPowers_name("Fly");
+        powersDao.addPowers(powers);
+
         Member member = new Member();
         member.setMember_name("Test name");
         member.setDescription("Test description");
-        member.setPowers("Test powers");
+        member.setPowers_id(powers.getPowers_id());
         member = memberDao.addMember(member);
         Member fromDao = memberDao.getMemberById(member.getMember_id());
         assertEquals(member, fromDao);
     }
 
     @Test
-    public void getAllMembers(){
+    public void getAll(){
+        //add a power
+        Powers powers = new Powers();
+        powers.setPowers_name("Fly");
+        powersDao.addPowers(powers);
+
         Member member = new Member();
         member.setMember_name("Test name");
         member.setDescription("Test description");
-        member.setPowers("Test powers");
-        member = memberDao.addMember(member);
+        member.setPowers_id(powers.getPowers_id());
+        memberDao.addMember(member);
 
         Member member2 = new Member();
         member2.setMember_name("Test name2");
         member2.setDescription("Test description2");
-        member2.setPowers("Test powers2");
-        member2 = memberDao.addMember(member2);
+        member2.setPowers_id(powers.getPowers_id());
+        memberDao.addMember(member2);
 
-        List<Member> members = memberDao.getAllMembers();
+        List<Member> members = memberDao.getAll();
         assertEquals(2, members.size());
         assertTrue(members.contains(member));
         assertTrue(members.contains(member2));
@@ -65,15 +83,20 @@ public class MemberDaoDBTest extends TestCase {
 
     @Test
     public void testUpdateMember() {
+        //add a power
+        Powers powers = new Powers();
+        powers.setPowers_name("Fly");
+        powersDao.addPowers(powers);
+
         Member member = new Member();
         member.setMember_name("Test name");
         member.setDescription("Test description");
-        member.setPowers("Test powers");
+        member.setPowers_id(powers.getPowers_id());
         member = memberDao.addMember(member);
 
         Member fromDao = memberDao.getMemberById(member.getMember_id());
         assertEquals(member, fromDao);
-        member.setMember_name("New Test name");
+        member.setDescription("New Test Description");
         memberDao.updateMember(member);
         assertNotEquals(member, fromDao);
         fromDao = memberDao.getMemberById(member.getMember_id());
@@ -82,10 +105,15 @@ public class MemberDaoDBTest extends TestCase {
 
     @Test
     public void testDeleteMemberById(){
+        //add a power
+        Powers powers = new Powers();
+        powers.setPowers_name("Fly");
+        powersDao.addPowers(powers);
+
         Member member = new Member();
         member.setMember_name("Test name");
         member.setDescription("Test description");
-        member.setPowers("Test powers");
+        member.setPowers_id(powers.getPowers_id());
         member = memberDao.addMember(member);
 
         Member fromDao = memberDao.getMemberById(member.getMember_id());
@@ -94,19 +122,5 @@ public class MemberDaoDBTest extends TestCase {
         fromDao = memberDao.getMemberById(member.getMember_id());
         assertNull(fromDao);
     }
-
-        //    @Test
-//    public void testGetAllMembersAtSighting(){
-//        Member member = new Member();
-//        member.setMember_name("Test name");
-//        member.setDescription("Test description");
-//        member.setPowers("Test powers");
-//        member = memberDao.addMember(member);
-//
-//        Member member2 = new Member();
-//        member2.setMember_name("Test name2");
-//        member2.setDescription("Test description2");
-//        member2.setPowers("Test powers2");
-//    }*/
 
 }

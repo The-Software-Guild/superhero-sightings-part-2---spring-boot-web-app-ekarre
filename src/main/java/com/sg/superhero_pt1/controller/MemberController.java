@@ -1,19 +1,16 @@
 package com.sg.superhero_pt1.controller;
 
-import com.sg.superhero_pt1.dao.MemberDao;
-import com.sg.superhero_pt1.dao.OrganizationDao;
-import com.sg.superhero_pt1.dao.PowersDao;
+import com.sg.superhero_pt1.dao.*;
 import com.sg.superhero_pt1.model.Member;
+import com.sg.superhero_pt1.model.MemberViewDetail;
 import com.sg.superhero_pt1.model.Organization;
 import com.sg.superhero_pt1.model.Powers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -27,9 +24,10 @@ public class MemberController {
     @Autowired
     PowersDao powersDao;
 
+
     @GetMapping("members")
     public String displayMembers(Model model){
-        List<Member> members = memberDao.getAllMembers();
+        List<MemberViewDetail> members = memberDao.getAllMembers();
         model.addAttribute("members", members);
         List<Organization> organizations = organizationDao.getAllOrganizations();
         model.addAttribute("organizations", organizations);
@@ -41,7 +39,7 @@ public class MemberController {
     @PostMapping("addMember")
     public String addMember(HttpServletRequest request){
         String member_name = request.getParameter("member_name");
-        String member_description = request.getParameter("member_description");
+        String member_description = request.getParameter("description");
         int powers = Integer.parseInt(request.getParameter("powers_id"));
         int org_id = Integer.parseInt(request.getParameter("org_id"));
 
@@ -50,6 +48,11 @@ public class MemberController {
         member.setDescription(member_description);
         member.setPowers_id(powers);
         memberDao.addMember(member);
+
+        Organization organization = new Organization();
+        organization.setOrg_id(org_id);
+        memberDao.addMemberToOrg(member, organization);
+
         return "redirect:/members";
     }
 
@@ -82,24 +85,37 @@ public class MemberController {
     public String editMember(HttpServletRequest request, Model model) {
         int member_id = Integer.parseInt(request.getParameter("member_id"));
         Member member = memberDao.getMemberById(member_id);
+        Integer org_id = Integer.valueOf((request.getParameter("org_id")));
+
         //below: adding in these list elements allow us to update these fields on the update page
         List<Organization> organizations = organizationDao.getAllOrganizations();
         model.addAttribute("organizations", organizations);
         List<Powers> powers = powersDao.getAllPowers();
         model.addAttribute("powers", powers);
         model.addAttribute("member", member);
+        //added this to have the last selected org show at the top of the edit page
+        /*int org_id = Integer.parseInt(request.getParameter("org_id"));
+        Organization organization = organizationDao.getOrganizationById(org_id);*/
+        model.addAttribute("lastOrgSelected", org_id);
         return "updateMember";
     }
 
     @PostMapping("updateMember")
     public String performUpdateMember(HttpServletRequest request) {
         int member_id = Integer.parseInt(request.getParameter("member_id"));
+        //added this
+        int org_id = Integer.parseInt(request.getParameter("org_id"));
         Member member = memberDao.getMemberById(member_id);
+        //added this
+        Organization org = organizationDao.getOrganizationById(org_id);
         member.setMember_name(request.getParameter("member_name"));
         member.setDescription(request.getParameter("description"));
         member.setPowers_id(Integer.parseInt(request.getParameter("powers_id")));
+        //added this
+        org.setOrg_id(Integer.parseInt(request.getParameter("org_id")));
 
         memberDao.updateMember(member);
+        memberDao.updateMemberOrg(member, org);
         return "redirect:/members";
     }
 

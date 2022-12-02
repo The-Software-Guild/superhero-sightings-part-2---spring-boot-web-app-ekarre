@@ -2,6 +2,7 @@ package com.sg.superhero_pt1.dao;
 
 
 import com.sg.superhero_pt1.TestApplicationConfiguration;
+import com.sg.superhero_pt1.model.Address;
 import com.sg.superhero_pt1.model.Organization;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -20,6 +21,9 @@ public class OrganizationDaoDBTest extends TestCase {
     @Autowired
     OrganizationDao organizationDao;
 
+    @Autowired
+    AddressDao addressDao;
+
     public OrganizationDaoDBTest() {}
 
     @Before
@@ -29,17 +33,29 @@ public class OrganizationDaoDBTest extends TestCase {
         for(Organization organization : organizations) {
             organizationDao.deleteOrganizationById(organization.getOrg_id());
         }
+        List<Address> addresses = addressDao.getAllAddresses();
+        for(Address address : addresses) {
+            addressDao.deleteAddressById(address.getAdd_id());
+        }
 
     }
 
     @Test
     public void testAddAndGetOrganization() {
+        //create a new address
+        Address address = new Address();
+        address.setStreet("123 Test Ave.");
+        address.setCity("Metropolis");
+        address.setState("MO");
+        address.setZipcode(12345);
+        addressDao.add(address);
+
         //create a new organization
         Organization organization = new Organization();
         organization.setOrg_name("wiley");
         organization.setOrg_description("Master of superheros");
         organization.setPhone("342-234-2343");
-        organization.setAdd_id(1);
+        organization.setAdd_id(address.getAdd_id());
         organizationDao.addOrganization(organization);
 
         Organization fromDao = organizationDao.getOrganizationById(organization.getOrg_id());
@@ -50,18 +66,28 @@ public class OrganizationDaoDBTest extends TestCase {
 
     @Test
     public void testGetAllAddresses() {
+        //create a new address
+        Address address = new Address();
+        address.setStreet("123 Test Ave.");
+        address.setCity("Metropolis");
+        address.setState("MO");
+        address.setZipcode(12345);
+        addressDao.add(address);
+
         //create 2 organizations
         Organization organization = new Organization();
         organization.setOrg_name("wiley");
         organization.setOrg_description("Master of superheros");
         organization.setPhone("342-234-2343");
+        organization.setAdd_id(address.getAdd_id());
         organizationDao.addOrganization(organization);
 
         Organization organization2 = new Organization();
-        organization.setOrg_name("wiley");
-        organization.setOrg_description("Master of superheros");
-        organization.setPhone("342-234-2343");
-        organizationDao.addOrganization(organization);
+        organization2.setOrg_name("wiley");
+        organization2.setOrg_description("Master of superheros");
+        organization2.setPhone("342-234-2343");
+        organization2.setAdd_id(address.getAdd_id());
+        organizationDao.addOrganization(organization2);
 
         List<Organization> organizations = organizationDao.getAllOrganizations();
 
@@ -73,11 +99,20 @@ public class OrganizationDaoDBTest extends TestCase {
 
     @Test
     public void testUpdateOrganization() {
+        //create a new address
+        Address address = new Address();
+        address.setStreet("123 Test Ave.");
+        address.setCity("Metropolis");
+        address.setState("MO");
+        address.setZipcode(12345);
+        addressDao.add(address);
+
         //create a new organization
         Organization organization = new Organization();
         organization.setOrg_name("wiley");
         organization.setOrg_description("Master of superheros");
         organization.setPhone("342-234-2343");
+        organization.setAdd_id(address.getAdd_id());
         organizationDao.addOrganization(organization);
 
         //update one part of it
@@ -92,11 +127,21 @@ public class OrganizationDaoDBTest extends TestCase {
 
     @Test
     public void testDeleteOrganizationById() {
+        //create a new address
+        Address address = new Address();
+        address.setStreet("123 Test Ave.");
+        address.setCity("Metropolis");
+        address.setState("MO");
+        address.setZipcode(12345);
+        addressDao.add(address);
+
         //create a new organization
         Organization organization = new Organization();
         organization.setOrg_name("wiley");
         organization.setOrg_description("Master of superheros");
         organization.setPhone("342-234-2343");
+        organization.setAdd_id(address.getAdd_id());
+
         organizationDao.addOrganization(organization);
 
         Organization fromDao = organizationDao.getOrganizationById(organization.getOrg_id());

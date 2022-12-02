@@ -1,6 +1,9 @@
 package com.sg.superhero_pt1.dao;
 
 import com.sg.superhero_pt1.model.Member;
+import com.sg.superhero_pt1.model.MemberViewDetail;
+import com.sg.superhero_pt1.model.Organization;
+import com.sg.superhero_pt1.model.Powers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,16 +31,30 @@ public class MemberDaoImpl implements MemberDao {
                 member.getPowers_id());
         int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
         member.setMember_id(newId);
+
         return member;
     }
 
     @Override
-    public List<Member> getAllMembers(){
-        final String sql = "SELECT * FROM member";
-        return jdbc.query(sql, new MemberMapper());
-
+    public void addMemberToOrg(Member member, Organization organization) {
+        final String sql = "INSERT INTO memberOrg(member_id, org_id) " + "VALUES(?,?)";
+        jdbc.update(sql, member.getMember_id(), organization.getOrg_id());
     }
 
+    @Override
+    public List<MemberViewDetail> getAllMembers(){
+        final String sql = "SELECT member.member_id, member.member_name, member.member_description, organization.org_name, organization.org_id, powers.powers_name FROM member " +
+                                   "JOIN memberOrg ON member.member_id=memberOrg.member_id " +
+                                   "JOIN organization ON memberOrg.org_id=organization.org_id " +
+                                   "JOIN powers ON member.powers_id=powers.powers_id ORDER BY member_id DESC";
+        return jdbc.query(sql, new MemberMapper2());
+    }
+
+    @Override
+    public List<Member> getAll(){
+        final String sql = "SELECT * FROM member";
+        return jdbc.query(sql, new MemberMapper());
+    }
 
     @Override
     public Member getMemberById(int member_id){
@@ -77,12 +94,20 @@ public class MemberDaoImpl implements MemberDao {
 
     @Override
     public void updateMember(Member member){
-        final String sql = "UPDATE member SET member_name = ?, member_description = ?, powers_id = ? " +
+        final String sql = "UPDATE member SET member_description = ?, powers_id = ? " +
                 "WHERE member_id = ?";
         jdbc.update(sql,
-                member.getMember_name(),
                 member.getDescription(),
                 member.getPowers_id(),
+                member.getMember_id());
+    }
+
+    @Override
+    public void updateMemberOrg(Member member, Organization org){
+        final String sql = "UPDATE memberOrg SET org_id = ? " +
+                                   "WHERE member_id = ?";
+        jdbc.update(sql,
+                org.getOrg_id(),
                 member.getMember_id());
     }
 
@@ -109,6 +134,22 @@ public class MemberDaoImpl implements MemberDao {
             member.setDescription(rs.getString("member_description"));
             member.setPowers_id(rs.getInt("powers_id"));
             return member;
+        }
+    }
+
+    public static final class MemberMapper2 implements RowMapper<MemberViewDetail> {
+
+        @Override
+        public MemberViewDetail mapRow(ResultSet rs, int index) throws SQLException {
+            MemberViewDetail mvd = new MemberViewDetail();
+            mvd.setMember_id(rs.getInt("member_id"));
+            mvd.setMember_name(rs.getString("member_name"));
+            mvd.setMember_description(rs.getString("member_description"));
+            mvd.setOrg_name(rs.getString("org_name"));
+            mvd.setPowers_name(rs.getString("powers_name"));
+            //added this in (also added it to the select statement in the query
+            mvd.setOrg_id(rs.getInt("org_id"));
+            return mvd;
         }
     }
 }

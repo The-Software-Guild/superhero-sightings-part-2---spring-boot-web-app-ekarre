@@ -1,16 +1,21 @@
 package com.sg.superhero_pt1.dao;
 
+import com.sg.superhero_pt1.TestApplicationConfiguration;
 import com.sg.superhero_pt1.model.Address;
 import com.sg.superhero_pt1.model.Sighting;
-import org.junit.jupiter.api.*;
+import org.junit.runner.RunWith;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.Before;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestApplicationConfiguration.class)
 public class SightingDaoDBTest {
 
     @Autowired
@@ -19,18 +24,9 @@ public class SightingDaoDBTest {
     @Autowired
     AddressDao addressDao;
 
-    public SightingDaoDBTest() {
-    }
+    public SightingDaoDBTest() {}
 
-    @BeforeAll
-    public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
-    @BeforeEach
+    @Before
     public void setUp() {
         List<Sighting> sightings = sightingDao.getAllSightings();
         for(Sighting sighting : sightings) {
@@ -43,9 +39,6 @@ public class SightingDaoDBTest {
         }
 
 
-    }
-    @AfterEach
-    public void tearDown() {
     }
 
     @Test
